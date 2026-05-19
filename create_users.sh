@@ -6,13 +6,11 @@ if [[ $EUID -ne 0 ]]; then	# If false, visar error nedan
   exit 1
 fi
 
-# En list av användare
-Users=("Anna" "Bjorn" "Charlie")
 # En list av undermappar
 Sub_dir=("Documents" "Downloads" "Work")
 
-# Loop genom varje användare
-for User in "${Users[@]}"; do
+# Loop genom varje användare som mata in som argument
+for User in "$@"; do
     # Skapa ny användare
     sudo useradd "$User"		
     echo "User '$User' lyckades skapat."

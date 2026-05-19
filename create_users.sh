@@ -14,7 +14,7 @@ Sub_dir=("Documents" "Downloads" "Work")
 # Loop genom varje användare
 for User in "${Users[@]}"; do
     # Skapa ny användare
-    useradd "$User"		
+    sudo useradd "$User"		
     echo "User '$User' lyckades skapat."
 
     # Skapa ett hemkatalog för ny användare manuellt

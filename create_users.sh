@@ -9,6 +9,12 @@ fi
 # En list av undermappar
 Sub_dir=("Documents" "Downloads" "Work")
 
+# Kontrollera att minst en användare skickats in
+if [[ $# -eq 0 ]]; then
+	echo "Error: Du måst ange minst ett användarnamn."
+	exit 1
+fi
+
 # Loop genom varje användare som mata in som argument
 for User in "$@"; do
     # Skapa ny användare

@@ -9,15 +9,13 @@ fi
 # En list av undermappar
 Sub_dir=("Documents" "Downloads" "Work")
 
-# Läsa användarens input och spara i Users
-read -p "Skriv in ditt/dina användarnamn: " -a Users
-#TEST
-echo "Anna Bjorn Charlie"
+# Lista för att spara users som mata in
+Users=("$@")
 
 # Loop genom varje användare
 for User in "${Users[@]}"; do
     # Skapa ny användare
-    sudo useradd "$User"		
+    useradd "$User"		
     echo "User '$User' lyckades skapat."
 
     # Skapa ett hemkatalog för ny användare manuellt

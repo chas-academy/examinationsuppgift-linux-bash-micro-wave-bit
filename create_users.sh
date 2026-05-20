@@ -9,8 +9,7 @@ fi
 # En list av undermappar
 Sub_dir=("Documents" "Downloads" "Work")
 
-# Lista för att spara users som mata in
-Users=("$@")
+Users=("Anna" "Bjorn" "Charlie")
 
 # Loop genom varje användare
 for User in "${Users[@]}"; do

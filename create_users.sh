@@ -9,14 +9,13 @@ fi
 # En list av undermappar
 Sub_dir=("Documents" "Downloads" "Work")
 
-# Kontrollera att minst en användare skickats in
-if [[ $# -eq 0 ]]; then
-	echo "Error: Du måst ange minst ett användarnamn."
-	exit 1
-fi
+# Läsa användarens input och spara i Users
+read -p "Skriv in ditt/dina användarnamn: " -a Users
+#TEST
+echo "Anna Bjorn Charlie"
 
-# Loop genom varje användare som mata in som argument
-for User in "$@"; do
+# Loop genom varje användare
+for User in "${Users[@]}"; do
     # Skapa ny användare
     sudo useradd "$User"		
     echo "User '$User' lyckades skapat."

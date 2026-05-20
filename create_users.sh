@@ -1,45 +1,50 @@
-#!/bin/bash 
+#!/bin/bash
+# Detta är en demo
+# Skriptet används för att skapar en användare, sätta upp en hemkatalog och tilldelar rätt grupp.
 
 # Kontrollera att användare körs som root
-if [[ $EUID -ne 0 ]]; then	# If false, visar error nedan
+if [[ $EUID -ne 0 ]]; then	# If $EUID motsvarar inte 0, visar error enligt nedan.
   echo "Error: Du har inte rättigheter för att köra skript!"
   exit 1
 fi
 
-# En list av undermappar
-Sub_dir=("Documents" "Downloads" "Work")
+# Kontrollera att minst en användare skickats in till terminalen som argument.
+if [[ $# -eq 0 ]]; then               # $# = används för att kontrollera antalet argument som skickats in till terminalen.
+  echo "Error: Ange minst ett användarnamn."
+  exit 1
+fi
 
-Users=("Anna" "Bjorn" "Charlie")
+# Kontrollera om användaren redan finns i systemet.
+for user in "$@"; do                   # $@ = alla argument
+  if ! id "$user" &>/dev/null; then    # &>/dev/null; = används för att gömma alla output
+  # Skapa en ny användare
+  useradd -m "$user"		
 
-# Loop genom varje användare
-for User in "${Users[@]}"; do
-    # Skapa ny användare
-    useradd "$User"		
-    echo "User '$User' lyckades skapat."
+  #Definiera path för hemkatalog
+  hemKatalog="/home/$user"
 
-    # Skapa ett hemkatalog för ny användare manuellt
-    Hemkatalog="/home/$User"
-	mkdir -p "$Hemkatalog"
-    chown "$User:$User" "$Hemkatalog"	# Ändra filägaren på hemkatalog till användare som precis skapat
-    chmod 700 "$Hemkatalog"				# Ändra hemkatalog rättigheter till 700, dvs. endast filägaren kan read, write, execute.
+  # Skapa undermappar, sättas deras ägare och ange deras rättigheter.
+  mkdir -p "$hemKatalog"/{Documents,Downloads,Work}
+  chown -R "$user:$user" "$hemKatalog"
+  chmod 700 "$hemKatalog"/{Documents,Downloads,Work}  # Ändra rättigheter till 700, dvs. endast filägaren kan read, write och write.
 
-    # Skapa undermappar Documents, Downloads och Work
-    for Dir in "${Sub_dir[@]}"; do
-      mkdir -p "$Hemkatalog/$Dir"
-      chown "$User:$User" "$Hemkatalog/$Dir"	# Ändra filägaren på undermappar till användare som precis skapat
-      chmod 700 "$Hemkatalog/$Dir"				# Ändra på undermappars rättigheter till 700, dvs. endast filägaren kan read, write, execute.
-    done
+  # Skriva ut meddelande till terminal
+  echo "Användare '$user' och dess kataloger har skapats."
 
-    # Skapa welcome_file.txt i hemkatalog,
-    Welcome_file="$Hemkatalog/welcome.txt"
-
+  # Skapa welcome.txt
+ welcomeFile="$hemKatalog/welcome.txt" 
     {
-      echo "Välkommen $User"
-      echo "Följande är alla användare i systemet:"
-      cut -d: -f1 /etc/passwd								# Skriva ut alla användarnamn i systemet, ett per rad. -d: för att bestämma en kolon (:) som avgränsare, eftersom information i etc/passwd sparar på detta sättet t.ex (jdoe:x:1001:1000:John Doe,Room 1007:/home/jdoe:/bin/bash). -f1 används för att hämta ut fält nummer 1, vilket motsvarar användarnamnet i filen /etc/passwd
-    } > "$Welcome_file"											# Spara följande i Welcome_file.txt
+      echo "Välkommen '$user'!"
+      echo "Följande användare finns i systemet: "
+  # cut = skriva ut alla användarnamn i systemet, ett per rad. 
+  # -d: används för att bestämma en kolon (:) som avgränsare.
+  # -f1 används för att hämta ut fält nummer 1, vilket motsvarar användarnamnet i filen /etc/passwd.     
+      cut -d: -f1 /etc/passwd | sort	      # Sortera listan alfabetisk			
+    } > "$welcomeFile" 											# Spara följande i welcome.txt
 
-    chown "$User:$User" "$Welcome_file"			# Ändra filägaren på Welcome_file och dess undermappar till användare som precis skapat
-    chmod 644 "$Welcome_file"								# Ändra rättigheter till 644, dvs. filägaren kan read och write, grupper kan endast läsa och alla och andra kan endast läsa.
-
+    chown "$user:$user" "$welcomeFile"			# Ändra filägaren för welcome.txt
+    chmod 600 "$welcomeFile"								# Ändra rättigheter till 600, dvs. endast filägaren kan read och write.
+else
+  echo "Användaren '$user' finns redan."
+fi
 done

@@ -8,11 +8,12 @@ if [[ $EUID -ne 0 ]]; then	# If $EUID motsvarar inte 0, visar error enligt nedan
   exit 1
 fi
 
-# Kontrollera att minst en användare skickats in till terminalen som argument.
-#if [[ "$#" -eq 0 ]]; then               # $# = används för att kontrollera antalet argument som skickats in till terminalen.
-#  echo "Error: Ange minst ett användarnamn."
-#  exit 1
-#fi
+:' >> Debugging...
+ # Kontrollera att minst en användare skickats in till terminalen som argument.
+if [[ "$#" -eq 0 ]]; then               # $# = används för att kontrollera antalet argument som skickats in till terminalen.
+  echo "Error: Ange minst ett användarnamn."
+  #exit 1
+fi 
 
 
 # Kontrollera om användaren redan finns i systemet.
@@ -50,3 +51,4 @@ else
   exit 1
 fi
 done
+'
